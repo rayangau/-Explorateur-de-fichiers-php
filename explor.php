@@ -8,8 +8,15 @@
 <ul>
 <?php
 
+if (isset($_GET['dir']))
+{
+liste($_GET['dir']);
+}
 
-
+if (isset($_GET['dir']))
+{
+liste($_GET['dir']);
+}
 
 
 
@@ -22,14 +29,27 @@ closedir($dossier);
 }
 
 
-
+<a href="http://localhost/Explorateur_de_fichiers/explore.php?dir=<?php echo $_GET['dir'] . "/" . $fichier?>"><?php echo $fichier?></a><br>
 
 
 ?>
 </ul>
 </body>
 </html>
-<!-- // $dir    = "C:/wamp64/www";
+
+
+
+
+
+
+
+
+
+
+<?php
+
+
+ // $dir    = "C:/wamp64/www";
 // $files = scandir($dir);
 
 // echo '<pre>';
@@ -63,5 +83,3 @@ closedir($dossier);
 
 
 
-// if (){}
- -->
