@@ -7,3 +7,4 @@ foreach($objects as $name => $object){
    var_dump($name);
 
 ?>
+..
