@@ -3,12 +3,12 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <title>explorateur de fichiers minimaliste</title>
-  <link rel="stylesheet" rev="stylesheet" type="text/css" href="css/style.css" media="screen"/> 
+  <link rel="stylesheet" rev="stylesheet" type="text/css" href="css/style.css" media="screen"/>
   <style type="text/css">
 @font-face {
   src: url('fonts/Aristotelica_Display_DemiBold_Trial.ttf');
   font-family: 'artistotelica';
-}  
+}
 h1 {
   font-family: 'artistotelica';
   background-color: rgba(12,12,13,0.5);
@@ -26,8 +26,12 @@ h1 {
   * {
     color: #FFF;
   }
+  a{
+    list-style: none;
+  }
 
 #centre {
+
   width: 600px;
   display: block;
   margin-right: auto;
@@ -36,7 +40,9 @@ h1 {
 }
 body {
   background-image: url('images/jungle-fond.jpg');
-  background-size: contain;
+  opacity:1;
+
+  background-repeat: no-repeat;
 }
 
 .impressionfichier {
@@ -88,7 +94,7 @@ input {
         if(is_dir($chemin.'/'.$fichier) && $fichier != '') {
 
          if($fichier != '.' && $fichier != '..') {
-          echo "<div class=\"dossier\"><img src='reposit.jpg'/><a href=\"$base_url?dossier=$dossier/$fichier\" title=\"ouvrir le dossier $fichier\">$fichier</a></div>";
+          echo "<div class=\"dossier\"><img src='reposit.png'/><a href=\"$base_url?dossier=$dossier/$fichier\" title=\"ouvrir le dossier $fichier\">$fichier</a></div>";
 
         } else if($dossier!="/" && $dossier!="." && $dossier!="" && $fichier =="..") {
           echo "<div class=\"dossier\"><img src='fleche.png'/><a href=\"$base_url?dossier=".substr($dossier,0,strrpos($dossier,"/"))."\" title=\"ouvrir le dossier $fichier\">Retour en arrière</a></div>";
@@ -98,7 +104,7 @@ input {
 
 //fopen
    //substr($dossier,0,strrpos($dossier,"/") : enlève à partir du dernier /
-   //? indique que c'est une variable. Dès qu'il y a du ?dossier, le get peut se mettre en marche et stocker dans la $variable 
+   //? indique que c'est une variable. Dès qu'il y a du ?dossier, le get peut se mettre en marche et stocker dans la $variable
 //    ./ : dossier courant
 //    .. : dossier précédent
     // part depuis la racine
@@ -111,14 +117,14 @@ $chemin_url = $base_url.'/'.$dossier;
        $nb++;
        $taille += filesize($fichier);
        $info = pathinfo($fichier);
-   echo '<div class="fichier"><a href="?dossier='.$dossier.'&amp;file='.$fichier.'"><img src="file.jpg"/>'.$fichier.'</a></div>';
-//echo '<div class="fichier"><a href="?file='.$chemin.'/'.$fichier.'"><img src="file.jpg"/>'.$fichier.'</a></div>';
+   echo '<div class="fichier"><a href="?dossier='.$dossier.'&amp;file='.$fichier.'"><img src="file.png"/>'.$fichier.'</a></div>';
+//echo '<div class="fichier"><a href="?file='.$chemin.'/'.$fichier.'"><img src="file.png"/>'.$fichier.'</a></div>';
 
-     
+
      }
 
      ?>
-     <!-- Lecture des fichiers 
+     <!-- Lecture des fichiers
 passer la variable dossier dans l'url : deux variables en get dans l'url
 file = fichier; dossier = dossier
      -->
@@ -130,9 +136,9 @@ file = fichier; dossier = dossier
        if (isset($_GET['file'])) {
        $extensions = array(".png",".gif",".jpg",".jpeg",".PNG",".JPG",".JPEG",".GIF");
        $extension = strrchr($_GET['file'],".");
-         if (in_array($extension, $extensions)){ 
+         if (in_array($extension, $extensions)){
         echo '<img class="preview" src="'.$base_url.trim(strip_tags($_GET['dossier'])).'/'.trim(strip_tags($_GET['file'])).'">';
-      
+
 } else {
           $filer = fopen($_GET['file'], 'r');
           $file = $dossier.'/'.fread($filer, 9999999);
@@ -143,7 +149,7 @@ file = fichier; dossier = dossier
       }
 
          //à faire si temps : ajouter un niveau d'extensions avec une petite animation qui dit que ça va etre difficile d'ouvrir ce fichier
-      
+
 
       ?>
     </div>
@@ -154,7 +160,7 @@ file = fichier; dossier = dossier
     printf("%d fichiers - %.0f ko - %.0f Mo libres",$nb,$taille/1024,(disk_free_space($chemin))/1048576);
 // on aurait pu mettre : echo $nb." fichiers - ".$taille. "octets";
     ?>
-<!-- <form method="post" action="telecharger.php"> 
+<!-- <form method="post" action="telecharger.php">
    <button value="submit">Télécharger</button>
 </form> -->
 <?php
@@ -162,8 +168,11 @@ if(isset($_GET['file'])){
 
 echo '<a href="telecharger.php?fichier='.$_GET['file'].'"><input type="submit" value="Télécharger"/></a>';
 }
+
+
+
 ?>
-<!-- 
+<!--
 bouton télécharger pointe vers une page qui sert juste à ça
 scanner dossier : base_serv. chemin réel (/var/html...)
 afficher image : base url : localhost. parc'afficher une image, c'est une requête http.
