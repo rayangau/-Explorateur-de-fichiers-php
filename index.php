@@ -3,52 +3,9 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <title>explorateur de fichiers minimaliste</title>
-  <link rel="stylesheet" rev="stylesheet" type="text/css" href="css/style.css" media="screen"/> 
+  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+  <link rel="stylesheet" rev="stylesheet" type="text/css" href="stylesAlethexplo.css" media="screen"/> 
   <style type="text/css">
-@font-face {
-  src: url('fonts/Aristotelica_Display_DemiBold_Trial.ttf');
-  font-family: 'artistotelica';
-}  
-h1 {
-  font-family: 'artistotelica';
-  background-color: rgba(12,12,13,0.5);
-  border-radius: 60%;
-}
-  img {
-    width: 20px;
-    max-height: 20px;
-  }
-
-  .preview {
-    width: 500px;
-    max-height: 500px;
-  }
-  * {
-    color: #FFF;
-  }
-
-#centre {
-  width: 600px;
-  display: block;
-  margin-right: auto;
-  margin-left: auto;
-  text-align: center;
-}
-body {
-  background-image: url('images/jungle-fond.jpg');
-  background-size: contain;
-}
-
-.impressionfichier {
- background-color: black;
-}
-.milieu, #racine {
-  background-color: rgba(12,12,13,0.5);
-  border-radius: 50px;
-}
-input {
-  color: black;
-}
 </style>
 </head>
 <body>
@@ -59,7 +16,7 @@ input {
   <div id="fond">
     <div id="centre">
       <h1>Explorateur de jungle php</h1>
-      <div id="racine">
+      <div id="racine" class="milieu">
         <?php
 // repertoire du fichier
         $base_serv = $_SERVER['DOCUMENT_ROOT'];
@@ -69,13 +26,10 @@ input {
        } else $dossier = '.';
 
        if (($dossier == '.') || ($dossier == '/') || ($dossier == '')) {
-        echo "Vous êtes à la racine de l'explorateur";
+        echo "<div class='etesracine'>Vous êtes à la racine de l'explorateur</div>";
       } else echo $dossier;
 
-      ?>
-    </div>
-    <div class="milieu">
-      <?php
+
       $base_url = '//'.$_SERVER['HTTP_HOST'].'/';
       $chemin = $base_serv.'/'.$dossier;
       unset($fichiers);
@@ -88,10 +42,10 @@ input {
         if(is_dir($chemin.'/'.$fichier) && $fichier != '') {
 
          if($fichier != '.' && $fichier != '..') {
-          echo "<div class=\"dossier\"><img src='reposit.jpg'/><a href=\"$base_url?dossier=$dossier/$fichier\" title=\"ouvrir le dossier $fichier\">$fichier</a></div>";
+          echo "<div class=\"dossier\"><img src='reposit.png'/><a href=\"$base_url?dossier=$dossier/$fichier\" title=\"ouvrir le dossier $fichier\">   $fichier</a></div>";
 
         } else if($dossier!="/" && $dossier!="." && $dossier!="" && $fichier =="..") {
-          echo "<div class=\"dossier\"><img src='fleche.png'/><a href=\"$base_url?dossier=".substr($dossier,0,strrpos($dossier,"/"))."\" title=\"ouvrir le dossier $fichier\">Retour en arrière</a></div>";
+          echo "<div class=\"dossierracine\"><a href=\"$base_url?dossier=".substr($dossier,0,strrpos($dossier,"/"))."\" title=\"ouvrir le dossier $fichier\"><img src='fleche.png'/><br>Retour en arrière</a></div>";
         }
       }
     }
@@ -105,64 +59,71 @@ input {
 
     $nb=0;
     $taille = 0;
-$chemin_url = $base_url.'/'.$dossier;
+    $chemin_url = $base_url.'/'.$dossier;
     foreach($fichiers as $fichier)
       if(!is_dir($chemin.'/'.$fichier) && $fichier != ''){
        $nb++;
        $taille += filesize($fichier);
        $info = pathinfo($fichier);
-   echo '<div class="fichier"><a href="?dossier='.$dossier.'&amp;file='.$fichier.'"><img src="file.jpg"/>'.$fichier.'</a></div>';
+       echo '<div class="fichier"><a href="?dossier='.$dossier.'&amp;file='.$fichier.'"><img src="file.png"/>    '.$fichier.'</a></div>';
 //echo '<div class="fichier"><a href="?file='.$chemin.'/'.$fichier.'"><img src="file.jpg"/>'.$fichier.'</a></div>';
 
-     
+
      }
 
      ?>
+     <div class="stats">
+     <?php
+     printf("%d fichiers - %.0f ko - %.0f Mo libres",$nb,$taille/1024,(disk_free_space($chemin))/1048576);
+// on aurait pu mettre : echo $nb." fichiers - ".$taille. "octets";
+?>
+</div>
+<?php
+     if(isset($_GET['file'])){
+
+      echo '<br><a href="telecharger.php?fichier='.$_GET['file'].'"><input type="submit" value="Télécharger"/></a>';
+      echo '<br><a href="'.$base_url.trim(strip_tags($_GET['dossier'])).'/'.trim(strip_tags($_GET['file'])).'"><input type="submit" value="Ouvrir"/></a>';
+    }
+
+
+    ?>
      <!-- Lecture des fichiers 
 passer la variable dossier dans l'url : deux variables en get dans l'url
 file = fichier; dossier = dossier
-     -->
+-->
 
-     <div class="affichage">
+<div class="affichage">
 
-       <?php
+ <?php
 
-       if (isset($_GET['file'])) {
-       $extensions = array(".png",".gif",".jpg",".jpeg",".PNG",".JPG",".JPEG",".GIF");
-       $extension = strrchr($_GET['file'],".");
-         if (in_array($extension, $extensions)){ 
-        echo '<img class="preview" src="'.$base_url.trim(strip_tags($_GET['dossier'])).'/'.trim(strip_tags($_GET['file'])).'">';
-      
-} else {
-          $filer = fopen($_GET['file'], 'r');
-          $file = $dossier.'/'.fread($filer, 9999999);
+ if (isset($_GET['file'])) {
+   $extensions = array(".png",".gif",".jpg",".jpeg",".PNG",".JPG",".JPEG",".GIF");
+   $extension = strrchr($_GET['file'],".");
+   if (in_array($extension, $extensions)){ 
+    echo '<img class="preview" src="'.$base_url.trim(strip_tags($_GET['dossier'])).'/'.trim(strip_tags($_GET['file'])).'">';
+
+  } else {
+    $filer = fopen($_GET['file'], 'r');
+    $file = $dossier.'/'.fread($filer, 9999999);
          // print_r($file);
 
-        echo '<div class="impressionfichier">'.$file.'</div>';
-        }
-      }
+    echo '<div class="impressionfichier">'.$file.'</div>';
+  }
+}
 
          //à faire si temps : ajouter un niveau d'extensions avec une petite animation qui dit que ça va etre difficile d'ouvrir ce fichier
-      
 
-      ?>
-    </div>
-  </div>
-  <div>
 
-    <?php
-    printf("%d fichiers - %.0f ko - %.0f Mo libres",$nb,$taille/1024,(disk_free_space($chemin))/1048576);
-// on aurait pu mettre : echo $nb." fichiers - ".$taille. "octets";
-    ?>
+?>
+</div>
+</div>
+<div>
+
+
 <!-- <form method="post" action="telecharger.php"> 
    <button value="submit">Télécharger</button>
-</form> -->
-<?php
-if(isset($_GET['file'])){
+ </form> -->
 
-echo '<a href="telecharger.php?fichier='.$_GET['file'].'"><input type="submit" value="Télécharger"/></a>';
-}
-?>
 <!-- 
 bouton télécharger pointe vers une page qui sert juste à ça
 scanner dossier : base_serv. chemin réel (/var/html...)
